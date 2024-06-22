@@ -30,15 +30,28 @@ public class NameRepository {
         return null; // Not found
     }
 
-    // Adds a new name to the array. Returns true if added, false if already exists
+    // Adds a new name to the array in the format "first name][whitespace][last name". Returns true if added, false if already exists
     public static boolean add(final String fullName) {
-        if (find(fullName) != null) {
+        // Split the fullName into first name and last name
+        String[] parts = fullName.split("\\s+");
+        if (parts.length != 2) {
+            System.out.println("Invalid format. Please enter first name and last name separated by whitespace.");
+            return false;
+        }
+
+        // Concatenate and add to names array
+        String firstName = parts[0];
+        String lastName = parts[1];
+        String fullNameFormatted = firstName + " " + lastName;
+
+        if (find(fullNameFormatted) != null) {
+            System.out.println("'" + fullNameFormatted + "' already exists in the repository.");
             return false; // Name already exists
         }
 
         // Create a new array with increased size
         String[] newNames = Arrays.copyOf(names, names.length + 1);
-        newNames[newNames.length - 1] = fullName; // Add new name at the end
+        newNames[newNames.length - 1] = fullNameFormatted; // Add new name at the end
         names = newNames; // Update names array
 
         return true;

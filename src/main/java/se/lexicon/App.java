@@ -10,43 +10,54 @@ public class App {
         // Initial size
         System.out.println("Initial size: " + NameRepository.getSize());
 
-        // Add names dynamically
+        // Loop to handle adding and finding names
         while (true) {
-            System.out.print("Enter name to add ('quit' to finish): ");
-            String inputName = scanner.nextLine().trim();
+            // Add names dynamically
+            while (true) {
+                System.out.print("\nEnter name to add ('quit' to finish adding): ");
+                String inputName = scanner.nextLine().trim();
 
-            if (inputName.equalsIgnoreCase("quit")) {
-                break;
+                if (inputName.equalsIgnoreCase("quit")) {
+                    break;
+                }
+
+                boolean added = NameRepository.add(inputName);
+                if (added) {
+                    System.out.println("'" + inputName + "' added successfully.");
+                    // Print all names after each addition
+                    System.out.println("All names: " + Arrays.toString(NameRepository.findAll()));
+                }
             }
 
-            boolean added = NameRepository.add(inputName);
-            if (added) {
-                System.out.println("'" + inputName + "' added successfully.");
-            } else {
-                System.out.println("'" + inputName + "' already exists in the repository.");
+            // Find names dynamically
+            while (true) {
+                System.out.print("\nEnter name to find ('quit' to finish finding): ");
+                String inputName = scanner.nextLine().trim();
+
+                if (inputName.equalsIgnoreCase("quit")) {
+                    break;
+                }
+
+                String foundName = NameRepository.find(inputName);
+                if (foundName != null) {
+                    System.out.println("'" + inputName + "' found in the repository as '" + foundName + "'.");
+                } else {
+                    System.out.println("'" + inputName + "' not found in the repository.");
+                }
+            }
+
+            // Prompt to quit or continue
+            System.out.print("\nDo you want to add more names or find more names? (add/find/quit): ");
+            String response = scanner.nextLine().trim().toLowerCase();
+            if (response.equals("quit")) {
+                break;
+            } else if (!response.equals("add") && !response.equals("find")) {
+                System.out.println("Invalid input. Please enter 'add', 'find', or 'quit'.");
             }
         }
 
-        // Find names dynamically
-        System.out.println("\nEnter names to find ('quit' to finish):");
-        while (true) {
-            System.out.print("Enter name: ");
-            String inputName = scanner.nextLine().trim();
-
-            if (inputName.equalsIgnoreCase("quit")) {
-                break;
-            }
-
-            String foundName = NameRepository.find(inputName);
-            if (foundName != null) {
-                System.out.println("'" + inputName + "' found in the repository as '" + foundName + "'.");
-            } else {
-                System.out.println("'" + inputName + "' not found in the repository.");
-            }
-        }
-
-        // Print all names
-        System.out.println("\nAll names: " + Arrays.toString(NameRepository.findAll()));
+        // Print all names after finishing
+        System.out.println("\nFinal All names: " + Arrays.toString(NameRepository.findAll()));
 
         // Clear names
         NameRepository.clear();
