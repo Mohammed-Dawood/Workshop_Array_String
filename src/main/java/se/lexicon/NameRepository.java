@@ -5,55 +5,84 @@ import java.util.Arrays;
 public class NameRepository {
     private static String[] names = new String[0];
 
-    // Returns the number of elements in the array
     public static int getSize() {
         return names.length;
     }
 
-    // Empties the names array
     public static void clear() {
         names = new String[0];
     }
 
-    // Returns all names in a new array
     public static String[] findAll() {
-        return Arrays.copyOf(names, names.length);
+        return names;
     }
 
-    // Returns name if found and null if not found
     public static String find(final String fullName) {
         for (String name : names) {
             if (name.equalsIgnoreCase(fullName)) {
                 return name;
             }
         }
-        return null; // Not found
+        return null;
     }
 
-    // Adds a new name to the array in the format "first name][whitespace][last name". Returns true if added, false if already exists
     public static boolean add(final String fullName) {
-        // Split the fullName into first name and last name
-        String[] parts = fullName.split("\\s+");
-        if (parts.length != 2) {
-            System.out.println("Invalid format. Please enter first name and last name separated by whitespace.");
+        if (find(fullName) != null) {
             return false;
         }
-
-        // Concatenate and add to names array
-        String firstName = parts[0];
-        String lastName = parts[1];
-        String fullNameFormatted = firstName + " " + lastName;
-
-        if (find(fullNameFormatted) != null) {
-            System.out.println("'" + fullNameFormatted + "' already exists in the repository.");
-            return false; // Name already exists
-        }
-
-        // Create a new array with increased size
-        String[] newNames = Arrays.copyOf(names, names.length + 1);
-        newNames[newNames.length - 1] = fullNameFormatted; // Add new name at the end
-        names = newNames; // Update names array
-
+        names = Arrays.copyOf(names, names.length + 1);
+        names[names.length - 1] = fullName;
         return true;
+    }
+
+    public static boolean update(final String original, final String updatedName) {
+        if (find(original) != null && find(updatedName) == null) {
+            for (int i = 0; i < names.length; i++) {
+                if (names[i].equalsIgnoreCase(original)) {
+                    names[i] = updatedName;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean remove(final String fullName) {
+        int index = -1;
+        for (int i = 0; i < names.length; i++) {
+            if (names[i].equalsIgnoreCase(fullName)) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) {
+            return false; // Name not found
+        }
+        String[] newArray = new String[names.length - 1];
+        for (int i = 0, j = 0; i < names.length; i++) {
+            if (i != index) {
+                newArray[j++] = names[i];
+            }
+        }
+        names = newArray;
+        return true;
+    }
+
+    public static String[] findByFirstName(final String firstName) {
+        return Arrays.stream(names)
+                .filter(name -> name.split(" ")[0].equalsIgnoreCase(firstName))
+                .toArray(String[]::new);
+    }
+
+    public static String[] findByLastName(final String lastName) {
+        return Arrays.stream(names)
+                .filter(name -> name.split(" ")[1].equalsIgnoreCase(lastName))
+                .toArray(String[]::new);
+    }
+
+    public static String[] findByFullName(final String fullName) {
+        return Arrays.stream(names)
+                .filter(name -> name.equalsIgnoreCase(fullName))
+                .toArray(String[]::new);
     }
 }
